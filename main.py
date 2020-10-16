@@ -7,7 +7,7 @@ jack skrable
 """
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 # read image
 im = Image.open('./images/branch.jpg')
@@ -98,6 +98,20 @@ def only_one(arr, color='green'):
     edit = gamma_compression(arr)
     edit[:,:,color_map[color]] = arr[:,:,color_map[color]]
     return edit
+
+
+def saturate(arr, scale=2.0):
+    """
+    Takes in a 3D array of RGB pixels.
+    Converts array to PIL object. Creates a saturation object.
+    Saturates the image by factor of scale. Converts back to array of pixels.
+    Returns 3D array of pixels.
+    """
+    im = Image.fromarray(arr)
+    sat = ImageEnhance.Color(im)
+    edit = np.array(sat.enhance(scale))
+    return edit
+
 
 
 # MAIN
