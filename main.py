@@ -28,6 +28,11 @@ def show_image(arr):
     Image.fromarray(arr).show()
 
 
+def save_image(arr, path):
+    print('Saving image to {}...'.format(path))
+    Image.fromarray(arr).save(path)
+
+
 def color_boost(arr, color='green', scale=2):
     """
     Takes in a 3D array of RGB pixels.
@@ -35,20 +40,18 @@ def color_boost(arr, color='green', scale=2):
     Reduces other colors by dividing by scale.
     Returns 3D array of RGB pixels.
     """
-    # tuples breaking logic somehow?
-    # color_map = {'red': 0, 'green': 1, 'blue':2, 'yellow':(0,1), 'purple': (0,2), 'turquoise': (1,2)}
-    color_map = {'red': 0, 'green': 1, 'blue':2}
+
+    color_map = {'red': [0], 'green': [1], 'blue':[2], 'yellow':[0,1], 'purple': [0,2], 'turquoise': [1,2]}
     print('Boosting {}...'.format(color))
     edit = np.copy(arr)
-    if type(color_map[color]) is tuple:
-        for col in color_map[color]:
-            edit[:,:,color_map[col]] = arr[:,:,color_map[col]] * scale    
-    else:
-        edit[:,:,color_map[color]] = arr[:,:,color_map[color]] * scale
-    edit[:,:,color_map[color]] = arr[:,:,color_map[color]] * scale
 
-    for color in [k for k in color_map if k not in color]:
-        edit[:,:,color_map[color]] = arr[:,:,color_map[color]] / scale
+    # scale up colors to enhance
+    for col in color_map[color]:
+        edit[:,:,col] = arr[:,:,col] * scale    
+
+    # scale down non-enhanced colors
+    # for col in [i for i in range(3) if i not in color_map[color]]:
+    #     edit[:,:,col] = arr[:,:,col] / scale
 
     return edit
 
@@ -94,9 +97,11 @@ def only_one(arr, color='green'):
     Replaces grayscale with original pixel value for specified color.
     Returns 3D array of pixels.
     """
-    color_map = {'red': 0, 'green': 1, 'blue':2}
+    # color_map = {'red': 0, 'green': 1, 'blue':2}
+    color_map = {'red': [0], 'green': [1], 'blue':[2], 'yellow':[0,1], 'purple': [0,2], 'turquoise': [1,2]}
     edit = gamma_compression(arr)
-    edit[:,:,color_map[color]] = arr[:,:,color_map[color]]
+    for col in color_map[color]:
+        edit[:,:,color_map[color]] = arr[:,:,color_map[color]]
     return edit
 
 
@@ -121,3 +126,12 @@ subway = read_image('./images/subway.jpg')
 branch = read_image('./images/branch.jpg')
 hotel = read_image('./images/hotel.jpg')
 leaf = read_image('./images/leaf.jpg')
+sign = read_image('./images/sign.jpg')
+
+
+
+"""
+turn into class for easy access?
+Need points between 6 main colors on map.
+Need some edge blending??
+"""
