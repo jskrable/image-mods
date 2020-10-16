@@ -19,6 +19,10 @@ im_arr = np.array(im)
 im_new = Image.fromarray(im_arr)
 
 
+def read_image(path):
+    return np.array(Image.open(path))
+
+
 def show_image(arr):
     print('Displaying image...')
     Image.fromarray(arr).show()
@@ -42,6 +46,7 @@ def color_boost(arr, color='green', scale=2):
     else:
         edit[:,:,color_map[color]] = arr[:,:,color_map[color]] * scale
     edit[:,:,color_map[color]] = arr[:,:,color_map[color]] * scale
+
     for color in [k for k in color_map if k not in color]:
         edit[:,:,color_map[color]] = arr[:,:,color_map[color]] / scale
 
@@ -80,3 +85,25 @@ def gamma_compression(arr):
     gray = np.expand_dims(edit.sum(axis=2), axis=2)
     final = np.uint8(np.append(gray, np.append(gray, gray, 2), 2))
     return final
+
+
+def only_one(arr, color='green'):
+    """
+    Takes in a 3D array of RGB pixels.
+    Converts pixels to grayscale using gamma_compression.
+    Replaces grayscale with original pixel value for specified color.
+    Returns 3D array of pixels.
+    """
+    color_map = {'red': 0, 'green': 1, 'blue':2}
+    edit = gamma_compression(arr)
+    edit[:,:,color_map[color]] = arr[:,:,color_map[color]]
+    return edit
+
+
+# MAIN
+###########################################################################
+grafitti = read_image('./images/grafitti.jpg')
+subway = read_image('./images/subway.jpg')
+branch = read_image('./images/branch.jpg')
+hotel = read_image('./images/hotel.jpg')
+leaf = read_image('./images/leaf.jpg')
