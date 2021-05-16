@@ -6,17 +6,32 @@ main.py
 jack skrable
 """
 
+import math
+import argparse
+import string
+import sys
 import numpy as np
 from PIL import Image, ImageEnhance
 
-# read image
-im = Image.open('./images/branch.jpg')
 
-# convert to array
-im_arr = np.array(im)
 
-# convert to image
-im_new = Image.fromarray(im_arr)
+# Progress bar for cli
+def progress(count, total, suffix=''):
+    bar_len = 60
+    filled_len = int(round(bar_len * count / float(total)))
+    percents = round(100.0 * count / float(total), 1)
+    bar = '#' * filled_len + '-' * (bar_len - filled_len)
+    sys.stdout.write('[%s] %s%s %s\r' % (bar, percents, '%', suffix))
+    sys.stdout.flush()
+
+# # read image
+# im = Image.open('./images/branch.jpg')
+
+# # convert to array
+# im_arr = np.array(im)
+
+# # convert to image
+# im_new = Image.fromarray(im_arr)
 
 
 def read_image(path):
@@ -117,6 +132,25 @@ def saturate(arr, scale=2.0):
     edit = np.array(sat.enhance(scale))
     return edit
 
+
+
+def composite(base, mod, threshold):
+
+    first = read_image('./first.jpg')
+    second = read_image('./second-1.jpg')
+
+    output = first.copy()
+
+    size = first.shape[0]
+
+
+    # keeps mostly _second right now
+    for i, row in enumerate(first):
+        progress(i+1, size, 'of image processing complete')
+        for ii, pixel in enumerate(row):
+            for iii, px in enumerate(pixel):
+                if abs(int(px) - (second[i][ii][iii])) > 25:
+                    output[i][ii][iii] = second[i][ii][iii]
 
 
 # MAIN
